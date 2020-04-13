@@ -1,0 +1,4 @@
+name: LaserTag
+version: ${project.version}
+main: com.github.frcsty.lasertag.LaserTag
+api-version: 1.13

@@ -1,0 +1,8 @@
+
+game:
+  commands:
+    - '&8» &bGame Commands &8(&f/game <arg>&8)'
+    - ''
+    - ' &8• &fjoin &8- &7Opens game selector'
+    - ' &8• &fleave &8- &7Leave current game'
+    - ''
