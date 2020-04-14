@@ -29,9 +29,9 @@ public class Projectile
         }
     }
 
-    String getWeapon(final LaserTag plugin)
+    Weapons getWeapon(final LaserTag plugin)
     {
-        return projectile.getPersistentDataContainer().get(new NamespacedKey(plugin, "weapon"), PersistentDataType.STRING);
+        return Weapons.valueOf(projectile.getPersistentDataContainer().get(new NamespacedKey(plugin, "weapon"), PersistentDataType.STRING));
     }
 
     org.bukkit.entity.Projectile getProjectile()

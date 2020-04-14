@@ -3,6 +3,8 @@ package com.github.frcsty.lasertag;
 import com.github.frcsty.lasertag.commands.GameCommand;
 import com.github.frcsty.lasertag.commands.WeaponCommand;
 import com.github.frcsty.lasertag.game.GameManager;
+import com.github.frcsty.lasertag.listeners.PlayerLeaveListener;
+import com.github.frcsty.lasertag.listeners.PlayerTagListener;
 import com.github.frcsty.lasertag.listeners.WeaponShootListener;
 import com.github.frcsty.lasertag.weapons.ProjectileTimer;
 import com.github.frcsty.lasertag.weapons.Weapons;
@@ -12,6 +14,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public final class LaserTag extends JavaPlugin
 {
@@ -27,10 +30,13 @@ public final class LaserTag extends JavaPlugin
         final CommandManager manager = new CommandManager(this);
 
         getServer().getPluginManager().registerEvents(new WeaponShootListener(this), this);
+        getServer().getPluginManager().registerEvents(new PlayerLeaveListener(this), this);
+        getServer().getPluginManager().registerEvents(new PlayerTagListener(this), this);
+
         registerWeaponsEnum(manager);
         manager.register(new WeaponCommand(), new GameCommand(this));
 
-        gameManager.createNewArena(1);
+        IntStream.rangeClosed(1, 2).forEach(gameManager::createNewArena);
         projectileTimer.runTimer();
     }
 

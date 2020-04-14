@@ -7,6 +7,7 @@ import com.github.frcsty.lasertag.commands.menus.WeaponSelector;
 import com.github.frcsty.lasertag.game.GameManager;
 import com.github.frcsty.lasertag.utility.Color;
 import me.mattstudios.mf.annotations.Command;
+import me.mattstudios.mf.annotations.Completion;
 import me.mattstudios.mf.annotations.Default;
 import me.mattstudios.mf.annotations.SubCommand;
 import me.mattstudios.mf.base.CommandBase;
@@ -51,13 +52,13 @@ public class GameCommand extends CommandBase
     }
 
     @SubCommand("participants")
-    public void gameParticipants(final Player player, final int arena)
+    public void gameParticipants(final Player player, @Completion("#range:1-2") final Integer arena)
     {
         new ParticipantsMenu(plugin, player, arena).getParticipantsMenu();
     }
 
     @SubCommand("start")
-    public void startGame(final Player player, final int arena)
+    public void startGame(final Player player, @Completion("#range:1-2") final Integer arena)
     {
         final GameManager manager = plugin.getGameManager();
 

@@ -6,33 +6,35 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.List;
+
 public class WeaponBuilder
 {
 
-    private Weapons  weapon;
-    private Material material;
-    private String   name;
-    private int      ammo;
+    private Weapons      weapon;
+    private Material     material;
+    private String       name;
+    private int          ammo;
+    private List<String> lore;
+    private int customData;
 
-    public WeaponBuilder(final Weapons weapon, final Material material)
-    {
-        this.weapon = weapon;
-        this.material = material;
-    }
-
-    public WeaponBuilder(final Weapons weapon, final Material material, final String name)
-    {
-        this.weapon = weapon;
-        this.material = material;
-        this.name = name;
-    }
-
-    public WeaponBuilder(final Weapons weapon, final Material material, final String name, final int ammo)
+    public WeaponBuilder(final Weapons weapon, final Material material, final String name, final int ammo, final int customData)
     {
         this.weapon = weapon;
         this.material = material;
         this.name = name;
         this.ammo = ammo;
+        this.customData = customData;
+    }
+
+    public WeaponBuilder(final Weapons weapon, final Material material, final String name, final int ammo, final List<String> lore, final int customData)
+    {
+        this.weapon = weapon;
+        this.material = material;
+        this.name = name;
+        this.ammo = ammo;
+        this.lore = lore;
+        this.customData = customData;
     }
 
     public ItemStack getWeapon()
@@ -45,24 +47,17 @@ public class WeaponBuilder
             meta.setDisplayName(Color.colorize(name));
         }
 
+        if (lore != null)
+        {
+            meta.setLore(Color.colorize(lore));
+        }
+
+        meta.setCustomModelData(customData);
+
+        item.setItemMeta(meta);
         item = ItemNBT.setNBTTag(item, "ammo", String.valueOf(ammo));
         item = ItemNBT.setNBTTag(item, "weapon", String.valueOf(weapon));
         return item;
-    }
-
-    public void setMaterial(final Material material)
-    {
-        this.material = material;
-    }
-
-    public void setName(final String name)
-    {
-        this.name = name;
-    }
-
-    public void setAmmo(final int ammo)
-    {
-        this.ammo = ammo;
     }
 
 }

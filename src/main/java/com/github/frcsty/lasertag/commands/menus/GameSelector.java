@@ -12,6 +12,7 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -39,11 +40,20 @@ public class GameSelector
         final GameManager manager = plugin.getGameManager();
 
         gui.setDefaultClickAction(event -> event.setCancelled(true));
-
         gui.getFiller().fillBorder(filler);
+
+        final List<Integer> emptySlots = new ArrayList<>();
+        for (int i = 0; i < gui.getRows() * 9; i++)
+        {
+            if (gui.getGuiItem(i) == null)
+            {
+                emptySlots.add(i);
+            }
+        }
 
         for (Integer arena : manager.getArenas().keySet())
         {
+            int slot = emptySlots.get(arena - 1);
             int players = manager.getArenaParticipants(arena).size();
             GuiItem joinGame = new GuiItem(
                     getArenaItem(arena, Material.LIGHT_BLUE_CONCRETE_POWDER, players, "&7Click To Join").build(), event ->
@@ -55,25 +65,25 @@ public class GameSelector
                 {
                     if (manager.getArenaParticipants(arena).contains(player.getUniqueId()))
                     {
-                        updateArenaItem(gui, arena, Material.RED_CONCRETE_POWDER, participants, "&cAlready Joined!");
+                        updateArenaItem(gui, arena, slot, Material.RED_CONCRETE_POWDER, participants, "&cAlready Joined!");
                         new BukkitRunnable()
                         {
                             @Override
                             public void run()
                             {
-                                updateArenaItem(gui, arena, Material.LIGHT_BLUE_CONCRETE_POWDER, participants, "&aJoined");
+                                updateArenaItem(gui, arena, slot, Material.LIGHT_BLUE_CONCRETE_POWDER, participants, "&aJoined");
                             }
                         }.runTaskLaterAsynchronously(plugin, 20);
                     }
                     else
                     {
-                        updateArenaItem(gui, arena, Material.LIME_CONCRETE_POWDER, participants, "&aSuccessfully Joined");
+                        updateArenaItem(gui, arena, slot, Material.LIME_CONCRETE_POWDER, participants, "&aSuccessfully Joined");
                         new BukkitRunnable()
                         {
                             @Override
                             public void run()
                             {
-                                updateArenaItem(gui, arena, Material.LIGHT_BLUE_CONCRETE_POWDER, participants, "&aJoined");
+                                updateArenaItem(gui, arena, slot, Material.LIGHT_BLUE_CONCRETE_POWDER, participants, "&aJoined");
                             }
                         }.runTaskLaterAsynchronously(plugin, 20);
                         manager.addArenaParticipant(arena, player.getUniqueId());
@@ -85,25 +95,25 @@ public class GameSelector
                     player.sendMessage(manager.getArenaParticipants(arena).toString());
                     if (!manager.getArenaParticipants(arena).contains(player.getUniqueId()))
                     {
-                        updateArenaItem(gui, arena, Material.RED_CONCRETE_POWDER, participants, "&cLeft-Click To Join!");
+                        updateArenaItem(gui, arena, slot, Material.RED_CONCRETE_POWDER, participants, "&cLeft-Click To Join!");
                         new BukkitRunnable()
                         {
                             @Override
                             public void run()
                             {
-                                updateArenaItem(gui, arena, Material.LIGHT_BLUE_CONCRETE_POWDER, participants, "&7Click To Join");
+                                updateArenaItem(gui, arena, slot, Material.LIGHT_BLUE_CONCRETE_POWDER, participants, "&7Click To Join");
                             }
                         }.runTaskLaterAsynchronously(plugin, 20);
                     }
                     else
                     {
-                        updateArenaItem(gui, arena, Material.RED_CONCRETE_POWDER, participants, "&aSuccessfully Left Queue");
+                        updateArenaItem(gui, arena, slot, Material.RED_CONCRETE_POWDER, participants, "&aSuccessfully Left Queue");
                         new BukkitRunnable()
                         {
                             @Override
                             public void run()
                             {
-                                updateArenaItem(gui, arena, Material.LIGHT_BLUE_CONCRETE_POWDER, participants, "&7Click To Join");
+                                updateArenaItem(gui, arena, slot, Material.LIGHT_BLUE_CONCRETE_POWDER, participants, "&7Click To Join");
                             }
                         }.runTaskLaterAsynchronously(plugin, 20);
                         manager.removeArenaParticipant(arena, player.getUniqueId());
@@ -111,7 +121,7 @@ public class GameSelector
                     }
                 }
             });
-            gui.addItem(joinGame);
+            gui.setItem(slot, joinGame);
         }
 
         final GuiItem close = new GuiItem(
@@ -132,9 +142,9 @@ public class GameSelector
         gui.open(player);
     }
 
-    private void updateArenaItem(final Gui gui, final int arena, final Material material, final int participants, final String status)
+    private void updateArenaItem(final Gui gui, final int arena, final int slot, final Material material, final int participants, final String status)
     {
-        gui.updateItem(13, getArenaItem(arena, material, participants, status).build());
+        gui.updateItem(slot, getArenaItem(arena, material, participants, status).build());
     }
 
     private ItemBuilder getArenaItem(final int arena, final Material material, final int participants, final String status)

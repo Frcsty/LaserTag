@@ -18,15 +18,14 @@ import java.util.UUID;
 
 public class GameManager
 {
-    private int countdown = 15;
-    private int game = 90;
-    private int timer;
 
-    private final Map<Integer, List<UUID>> arenas = new HashMap<>();
-    private final Map<Integer, Boolean> arenaStatus = new HashMap<>();
-    private final List<UUID> participants = new ArrayList<>();
-    private final Timer gameTimer = new Timer();
-    private final TimerTask gameTask = new TimerTask()
+    private final Map<Integer, List<UUID>> arenas      = new HashMap<>();
+    private final Map<Integer, Boolean>    arenaStatus = new HashMap<>();
+    private final Timer                    gameTimer   = new Timer();
+    private       int                      countdown   = 15;
+    private       int                      game        = 90;
+    private       int                      timer;
+    private final TimerTask                gameTask    = new TimerTask()
     {
         @Override
         public void run()
@@ -52,6 +51,11 @@ public class GameManager
                         final ItemStack item = player.getInventory().getItemInMainHand();
 
                         if (item.getType().equals(Material.AIR))
+                        {
+                            return;
+                        }
+
+                        if (ItemNBT.getNBTTag(item, "ammo") == null)
                         {
                             return;
                         }
@@ -125,6 +129,7 @@ public class GameManager
     {
         if (!arenas.containsKey(id))
         {
+            final List<UUID> participants = new ArrayList<>();
             arenas.put(id, participants);
         }
     }

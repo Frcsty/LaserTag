@@ -1,7 +1,6 @@
 package com.github.frcsty.lasertag.listeners;
 
 import com.github.frcsty.lasertag.LaserTag;
-import com.github.frcsty.lasertag.game.GameManager;
 import com.github.frcsty.lasertag.utility.Color;
 import com.github.frcsty.lasertag.weapons.Projectile;
 import com.github.frcsty.lasertag.weapons.ProjectileTimer;
@@ -16,17 +15,16 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class WeaponShootListener implements Listener
 {
 
-    private final LaserTag plugin;
-    private       Projectile     projectile;
+    private final LaserTag        plugin;
     private final ProjectileTimer timer;
-    private boolean reloading = false;
+    private       Projectile      projectile;
+    private       boolean         reloading = false;
 
     public WeaponShootListener(final LaserTag plugin)
     {
@@ -58,16 +56,16 @@ public class WeaponShootListener implements Listener
                 newAmmo = weapons.getAmmo();
             }
             reloading = true;
+            player.sendActionBar(Color.colorize("&8-= &bReloading &8=-"));
             new BukkitRunnable()
             {
                 @Override
                 public void run()
                 {
-                    player.sendActionBar(Color.colorize("&8-= &bReloading &8=-"));
-
+                    player.sendActionBar(Color.colorize("&8-= &bReloaded &8=-"));
+                    reloading = false;
                 }
-            }.runTaskTimerAsynchronously(plugin, 0, 20);
-            reloading = false;
+            }.runTaskLaterAsynchronously(plugin, 30);
             item = ItemNBT.setNBTTag(item, "ammo", String.valueOf(newAmmo));
             player.getInventory().setItemInMainHand(item);
         }
@@ -104,21 +102,6 @@ public class WeaponShootListener implements Listener
         {
             timer.removeProjectile(projectile);
             projectile.removeProjectile();
-        }
-    }
-
-    @EventHandler
-    public void onLeave(PlayerQuitEvent event)
-    {
-        final GameManager manager = plugin.getGameManager();
-        final Player player = event.getPlayer();
-
-        for (Integer arena : manager.getArenas().keySet())
-        {
-            if (manager.getArenaParticipants(arena).contains(player.getUniqueId()))
-            {
-                manager.removeArenaParticipant(arena, player.getUniqueId());
-            }
         }
     }
 

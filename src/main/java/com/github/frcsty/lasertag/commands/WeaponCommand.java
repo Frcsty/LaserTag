@@ -20,8 +20,9 @@ public class WeaponCommand extends CommandBase
 {
 
     @SubCommand("give")
-    public void giveCommand(final CommandSender sender, @Completion("#players") final Player target, @Completion("#weapons") final Weapons weapon)
+    public void giveCommand(final CommandSender sender, @Completion("#players") final Player target, final String object)
     {
+        final Weapons weapon = Weapons.valueOf(object.toUpperCase());
         if (weapon == null)
         {
             sender.sendMessage(Color.colorize("&8[&bLaserTag&8] &7Specified weapon does not exist!"));
@@ -36,7 +37,7 @@ public class WeaponCommand extends CommandBase
 
         final Inventory inventory = target.getInventory();
         final String weaponName = weapon.getName();
-        final ItemStack item = new WeaponBuilder(weapon, weapon.getMaterial(), weaponName, weapon.getAmmo()).getWeapon();
+        final ItemStack item = new WeaponBuilder(weapon, weapon.getMaterial(), weaponName, weapon.getAmmo(), weapon.getCustomData()).getWeapon();
 
         if (inventory.firstEmpty() == -1)
         {
